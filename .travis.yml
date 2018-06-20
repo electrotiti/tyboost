@@ -1,0 +1,10 @@
+language: "node_js"
+node_js:
+  - "v10"
+  - "v9"
+  - "v8"
+
+before_install:
+ - "yarn install"
+
+script: "yarn test"

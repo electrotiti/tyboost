@@ -1,0 +1,17 @@
+{
+  "name": "tyboost",
+  "version": "1.0.0",
+  "description": "Initialization layer and tools for Node.js applications.",
+  "main": "index.js",
+  "repository": "git@github.com:electrotiti/tyboost.git",
+  "author": "Thierry Leszkowicz <electrotiti@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "npm run test-unit",
+    "test-unit": "NODE_ENV=test mocha -S --recursive test/units/"
+  },
+  "devDependencies": {
+    "chai": "4.1.2",
+    "mocha": "5.2.0"
+  }
+}
