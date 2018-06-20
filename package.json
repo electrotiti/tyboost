@@ -2,8 +2,21 @@
   "name": "tyboost",
   "version": "1.0.0",
   "description": "Initialization layer and tools for Node.js applications.",
-  "main": "index.js",
-  "repository": "git@github.com:electrotiti/tyboost.git",
+  "main": "./lib",
+  "keywords": [
+    "express",
+    "node",
+    "boot",
+    "init",
+    "startup"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:electrotiti/tyboost.git"
+  },
+  "bugs": {
+    "url": "http://github.com/electrotiti/tyboost/issues"
+  },
   "author": "Thierry Leszkowicz <electrotiti@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -13,5 +26,8 @@
   "devDependencies": {
     "chai": "4.1.2",
     "mocha": "5.2.0"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
   }
 }
