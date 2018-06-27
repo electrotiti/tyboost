@@ -1,6 +1,6 @@
 {
   "name": "tyboost",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Initialization layer and tools for Node.js applications.",
   "main": "./lib",
   "keywords": [
