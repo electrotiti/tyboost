@@ -1,11 +1,16 @@
-language: "node_js"
+language: node_js
 node_js:
-  - "v10"
-  - "v9"
-  - "v8"
-  - "v6"
-
+- v10
+- v9
+- v8
 before_install:
- - "npm install"
-
-script: "npm test"
+- npm install
+script: npm test
+deploy:
+  provider: npm
+  email: electrotiti@gmail.com
+  api_key:
+    secure: EOMcGmt7aGb+C3uzmh5dMm0rXrRiJSkRzRFIU2J2lX6vJlReBzBQeLxpmdX/gwtvm8K5IpbJFoGpyKmsyxmwzIFsv+reAbri2oZGRlEiUVTYdGsPTOAyF1Bn32LDPo/P4Ow2A0ZJqHBozUL/hFeRoiPGrPZY7wMV0yxf4H+qJS3xn7qxkt8GzYN3qbsr+Bt4crK94Ob0wAgfhyAdIy9tINAtjhuI3V46vbMsux9sGhEUxpyoSE2KDfnLblMehrJJ6oEnnYcMp9BfYkCB6PNJSf11BbzPjQrMjjNSOrzHWE3YLB0C/v12AMiRkozLhXFrlIh49AWLmBIg/gzyQs2WHCy8jPzfqovtz/2lMrolkZyr/po/gljrq5jqwSfB0eOT809lHmYxXh/VQ1Fd14xbjGbqKgf6HSoTH6HZ6Sgl7HaOlkoba6O/kQ+zJWeobpYJu4Wd+KDQWRGinGpXS1w4LzNjqYa4XrwPfPXyxXZgsqaJjAmYm5kNkG8AyM7XRlQ6ttV/4TwJZZbQ9adJRmOJl+MjsZOQiZJpS3cEgQYy73iKjg3s8gALEuhcz5wNR2YtiKLti1faERyGabi1iwF+cqOEyVYW692oLyGVpV8yJDYDKPo8jUEGUjzeqCQi5vF3cUpd2MdYo/5bNawSPXfuYfCl9PyRz/Ws1mCnJJuDpiA=
+  on:
+    tags: true
+    repo: electrotiti/tyboost

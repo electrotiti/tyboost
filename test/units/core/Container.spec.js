@@ -51,6 +51,12 @@ describe('Container', function () {
       }).should.throw(Error, 'Invalid name. Name should be a string')
     })
 
+    it('should throw error with name already used', () => {
+      (function () {
+        container.register('myservice', myClassTest1)
+      }).should.throw(Error, 'A service is already register with the name: myservice')
+    })
+
     it('should get a new service each call (not singleton)', () => {
       container.register('myservice2', myClassTest2, [], false)
       const myservice = container.get('myservice2')
