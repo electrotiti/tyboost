@@ -87,7 +87,7 @@ describe('Container', function () {
     it('should register with dependencies', () => {
         container2.register('myservice', myClassTest3)
         container2._services.size.should.be.eq(1)
-        container2.register('myservice2', myClassTest4, ['myservice'])
+        container2.register('myservice2', myClassTest4, ['@myservice'])
         container2._services.size.should.be.eq(2)
     })
 
@@ -102,19 +102,21 @@ describe('Container', function () {
     const container3 = new Container({param1: "val1", param2: {sub_param1: "val2"}})
 
     class myClassTest5 {
-      constructor (param1, param2) {
+      constructor (param1, param2, param3) {
         this.param1 = param1
         this.param2 = param2
+        this.param3 = param3
       }
     }
 
     it('should register with params', () => {
-      container3.register('myservice', myClassTest5, ['%param1%', '%param2.sub_param1%'])
+      container3.register('myservice', myClassTest5, ['%param1%', '%param2.sub_param1%', 'staticvalue'])
       container3._services.size.should.be.eq(1)
       const myservice3 = container3.get('myservice')
       myservice3.should.be.instanceOf(myClassTest5)
       myservice3.param1.should.be.eq('val1')
       myservice3.param2.should.be.eq('val2')
+      myservice3.param3.should.be.eq('staticvalue')
     })
 
     it('should throw error with unknown params level1', () => {

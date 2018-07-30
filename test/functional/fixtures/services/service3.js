@@ -11,4 +11,4 @@ class Service3 {
 }
 
 
-module.exports = ['service3', Service3, ['service2','%conf.param2%','%otherconf.param1%'], true]
+module.exports = ['service3', Service3, ['@service2','%conf.param2%','%otherconf.param1%'], true]

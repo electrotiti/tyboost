@@ -6,10 +6,10 @@
 
 Initialization layer and tools for Node.js applications.
 
-Tyboost allows initialization steps to be registered for an application. 
+Tyboost allows initialization steps to be registered for an application.
 All these steps will be executed sequentially during startup, after which the application will be ready to run.
 
-Tyboost also provides several helpers to load components such as routes handlers, 
+Tyboost also provides several helpers to load components such as routes handlers,
 services with IOC, middlewares, etc.
 
 ## Table of contents
@@ -23,39 +23,41 @@ services with IOC, middlewares, etc.
 - [Express JS Helpers](#express-js-helpers)
   - [Routes helper](#routes-helper)
   - [Services helper](#services-helper)
+    - [Load by file](#load-by-file)
+    - [Load by object](#load-by-object)
+    - [Load by array of object](#load-by-array-of-object)
   - [Middleware helper](#middleware-helper)
 - [Example](#example)
 - [Tests](#tests)
 - [License](#license)
- 
+
 ## Installation
 ```bash
 $ npm install tyboost
 ```
 ## Usage
 
-Tyboost should be applicable to any Node.js application. 
+Tyboost should be applicable to any Node.js application.
 Currently it has been tested with Express Js which is one of the most common Framework
 
 ```js
 const express = require('express')
 const tyboost = require('tyboost')
 const config = require('./application-config.json')
+const app = tyboost(express(), config)
 ```
 
-const app = tyboost(express(), config)
 
 This will create an Express Js application with two additional functions: ```app.register()``` and ```app.boot()```
 The first one is use to register a step, (manually or with helpers) and the second one is use to boot the application
-by executed all registered steps. 
+by executed all registered steps.
 
-The **config** parameter is an object with your own configuration of your application. 
-It will be available in the IOC container and in the "config" parameter of your Express JS application 
-by calling ```app.get('config')```
+The optional **config** parameter is an object with your own configuration of your application.
+It will be available in the IOC container and in your Express JS application by calling ```app.get('config')```
 
 
 ## Register step
-When starting a Node JS application, some steps must be executed sequentially, 
+When starting a Node JS application, some steps must be executed sequentially,
 such as loading routes, creating services, connecting to databases or registering middleware.
 
 ### Helpers registration
@@ -75,7 +77,7 @@ You can register manually a function or an array of function
 app.register(() => {
     // Do something here
 })
-    
+
 app.register([
     () => {
         // Do something here
@@ -86,10 +88,10 @@ app.register([
  ])
 ```
 
-### Order of execution 
+### Order of execution
 
-Each step will be executed following the order of registration, **BUT ONLY** if the step is **synchronous** 
-or if **the step return a promise**. 
+Each step will be executed following the order of registration, **BUT ONLY** if the step is **synchronous**
+or if **the step return a promise**.
 An async function like ```setTimeout``` will not be execute in the registration flow order
 (even it can be execute after boot of application)
 
@@ -98,14 +100,14 @@ An async function like ```setTimeout``` will not be execute in the registration 
 app.register(() => {
     // This step will be the first to be execute
 })
-    
+
 // Second to be register
 app.register(() => {
     setTimeout(()=> {
        // This code will be the third to be execute
     }, 1000)
 })
-    
+
 // Third to be register
 app.register(() => {
     return new Promise(resolve => {
@@ -117,7 +119,7 @@ app.register(() => {
 
 ## Boot application
 
-Call ```app.boot``` to boot your application, this will return a promise. 
+Call ```app.boot``` to boot your application, this will return a promise.
 Registered steps will be executed sequentially, and the promise will be resolve when all steps are complete.
 
 Example with the default promise syntax:
@@ -165,10 +167,10 @@ Example of a directory structure
     .
     +-- index.js
     +-- src
-    |   +-- handler 
+    |   +-- handler
     |   |   +-- account
     |   |   |   +-- User.js
-    |   |   +-- Login.js     
+    |   |   +-- Login.js
 
 File User.js:
 ```js
@@ -201,33 +203,37 @@ You can add prefix ```/api``` a the beginning of your route like this:
 app.register(tyboost.routes(__dirname + 'src/handler'), '/api')
 ```
 You can also call this helper with only with one file
-```js    
+```js
 app.register(tyboost.routes(__dirname + 'src/handler/account/User.js'))
 ```
-This helper is to help you to load quickly your routes but you can do this manually like this:
+The routes helper is design to load multiple routes in same time but the following syntax will do the same thing:
 
 ```js
 let router = express.Router()
-app.register(() => {
-    router.get('/user', (req, res)=>{
-        res.json({name:'My User Name'})
+  app.register(() => {
+    router.get('/user', (req, res) => {
+      res.json({name:'My User Name'})
     })
-    app.use('/account', router)
+  app.use('/account', router)
 })
 ```
 
-*But it's more or less what the helper does ;-)*
 
 ### Services helper
-The services helpers allows you to load multiple services in an IOC (Inversion Of Control) container. 
-This container will be available in the "context" parameter of the NodeJS application and usable for instance in route handler.
+The services helpers allows you to load multiple services in an IOC (Inversion Of Control) container.
+This container will be available in a __container__ parameter of the NodeJS application
+and usable for instance in route handler by calling ```app.get('container')```
+
+You have multiple way to call the the service helper:
+
+#### Load by file
 
 Each file must return an array (or an object) with a service definition, containing the following parameters:
 
 * Unique service name (REQUIRED)
 * Definition of Class (REQUIRED)
 * Array of dependencies (OPTIONAL, default: [])
-* A boolean that define if the service is a singleton (OPTIONAL, default: true)    
+* A boolean that define if the service is a singleton (OPTIONAL, default: true)
 
 The values in _dependencies_ object the name of an other service or a config parameters of the main configuration.
 
@@ -239,26 +245,25 @@ const Service = class Service {
     constructor (otherService, param1, param2) {
     // Do something
     }
-    
+
     myFunc() {
     // Do something
     }
 }
 
-module.exports = ['service1', Service, ['service2', '%param1%', '%section1.param2%'], true]
+module.exports = ['service1', Service, ['@service2', '%param1%', '%section1.param2%'], true]
 ```
 
 or with an object:
 
 ```js
-module.exports =  { name: 'service1', 
+module.exports =  { name: 'service1',
                     definition: Service,
-                    dependencies: ['service2', '%param1%', '%section1.param2%'],
+                    dependencies: ['@service2', '%param1%', '%section1.param2%'],
                     singleton: true }
 ```
 
-After creation your service file you have to call Tyboost with a config object 
-(only if you use config in your service) and call the service helper:
+To load the services with a config file:
 
 ```js
 const express = require('express')
@@ -270,23 +275,48 @@ const app = tyboost(express(), config)
 app.register(tyboost.services('/path/to/the/services'))
 ```
 
-After this you can use the container in an route like this:
+After doing this you can use the container in an route like this:
 
 ```js
-router.get('/my-route', (req, res)=>{
-    const context = req.app.get('context').get('service1')
-    const service = context.get('service1')
+router.get('/my-route', (req, res) => {
+    const container = req.app.get('container').get('service1')
+    const service = container.get('service1')
     const result = service.myFunc()
-    
+
     res.json(result)
 })
+```
+
+#### Load by object
+```js
+const Service = class Service { constructor (param1){} }
+app.register(tyboost.services({name: 'myServiceName', definition: Service, dependencies: ['value1']}))
+```
+
+#### Load by array of object
+```js
+const Service = class Service { constructor (param1){} }
+app.register(tyboost.services([ {
+                                    name: 'myServiceName',
+                                    definition: Service,
+                                    dependencies: ['value1'],
+                                    singleton: false
+                                 },
+                                 {
+                                    name: 'myServiceName2',
+                                    definition: Service,
+                                    dependencies: ['value2'],
+                                    singleton: true
+                                 }
+                               ]
+               ))
 ```
 
 ### Middleware helper
 The routes helpers allows you to load multiple middleware from a folder (including the sub folder) at one time.
 Each file have to return a function.
 
-If you want that your middleware to be execute before route Handler you have to call the middleware helper before loading route. 
+If you want that your middleware to be execute before route Handler you have to call the middleware helper before loading route.
 By the way, if you want to register a middleware that catch all error, you have to call the middleware helper after all the other registration.
 
 Example with two middleware:
@@ -307,7 +337,7 @@ To launch the test you just have to do:
 $ npm install
 $ npm test
 ```
-    
+
 ## License
 
 The MIT License
