@@ -328,7 +328,7 @@ app.register(tyboost.middlewares('/path/to/the/middleware_post_handler'))
 ```
 
 ## Example
-To see a complete example, please look in the [example](https://github.com/electrotiti/tyboost/tree/master/example "Tyboost Example folder") folder of this project
+Repository example are available here: https://github.com/electrotiti/tyboost-example
 
 ## Tests
 To launch the test you just have to do:
