@@ -119,6 +119,26 @@ describe('Container', function () {
       myservice3.param3.should.be.eq('staticvalue')
     })
 
+    class myClassTest6 {
+      constructor ({param1, param2, param3}) {
+        this.param1 = param1
+        this.param2 = param2
+        this.param3 = param3
+      }
+    }
+
+    const container4 = new Container({param1: "value1", param2: {sub_param1: "value2"}})
+
+    it('should register with object params', () => {
+      container4.register('myservice', myClassTest6, [{param1: '%param1%', param2:'%param2.sub_param1%', param3:'mystaticvalue'}])
+      container4._services.size.should.be.eq(1)
+      const myservice4 = container4.get('myservice')
+      myservice4.should.be.instanceOf(myClassTest6)
+      myservice4.param1.should.be.eq('value1')
+      myservice4.param2.should.be.eq('value2')
+      myservice4.param3.should.be.eq('mystaticvalue')
+    })
+
     it('should throw error with unknown params level1', () => {
       (function () {
         container3.register('myservice2', myClassTest5, ['%param3%', '%param2.sub_param1%'])
@@ -130,5 +150,6 @@ describe('Container', function () {
         container3.register('myservice2', myClassTest5, ['%param1%', '%param2.sub_param2%'])
       }).should.throw(Error, 'Unable to get config: param2.sub_param2')
     })
+
   })
 })
